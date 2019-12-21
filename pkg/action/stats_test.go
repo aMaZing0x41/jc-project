@@ -30,7 +30,7 @@ func TestAddAction(t *testing.T) {
 }
 
 func TestAddActionMany(t *testing.T) {
-	actions["test"] = 75
+	AddAction(`{"action":"test", "time": 75}`)
 	err := AddAction(`{"action":"test", "time": 125}`)
 	if err != nil {
 		t.Errorf("AddAction() returned error: %v", err)
