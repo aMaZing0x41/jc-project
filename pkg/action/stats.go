@@ -11,9 +11,34 @@ type action struct {
 	Time   float32 `json:",omitempty"`
 }
 
-var actions = map[string]float32{}
+type empty struct{}
+
+var (
+	actions   = map[string]float32{}
+	addChan   = make(chan string)
+	statsChan = make(chan empty)
+)
+
+func init() {
+	go func() {
+		for {
+			select {
+			case a := <-addChan:
+				addActionInternal(a)
+			case <-statsChan:
+				fmt.Println(getStatsInternal())
+			}
+		}
+	}()
+}
 
 func AddAction(a string) error {
+	addChan <- a
+	//todo: need an error chan
+	return nil
+}
+
+func addActionInternal(a string) error {
 	if a == "" {
 		return errors.New("invalid action: no data")
 	}
@@ -36,7 +61,13 @@ func AddAction(a string) error {
 }
 
 func GetStats() string {
+	statsChan <- empty{}
+	return ""
+}
+
+func getStatsInternal() string {
 	//TODO: needs to return different structure
+
 	result, _ := json.Marshal(actions)
 	return string(result)
 }
