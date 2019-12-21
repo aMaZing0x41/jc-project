@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/amazing0x41/jc-project/pkg/stats"
+	"github.com/amazing0x41/jc-project/pkg/action/stats"
 )
 
 func main() {

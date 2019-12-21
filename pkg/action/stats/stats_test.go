@@ -2,6 +2,8 @@ package stats
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAddAction(t *testing.T) {
@@ -25,6 +27,15 @@ func TestAddAction(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestAddActionMany(t *testing.T) {
+	actions["test"] = 75
+	err := AddAction(`{"action":"test", "time": 125}`)
+	if err != nil {
+		t.Errorf("AddAction() returned error: %v", err)
+	}
+	assert.Equal(t, float32(100), actions["test"])
 }
 
 func TestGetStats(t *testing.T) {
