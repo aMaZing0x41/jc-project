@@ -1,4 +1,4 @@
-package stats
+package action
 
 import (
 	"encoding/json"
