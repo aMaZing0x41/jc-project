@@ -3,17 +3,17 @@ package main
 import (
 	"fmt"
 
-	"github.com/amazing0x41/jc-project/pkg/action/stats"
+	"github.com/amazing0x41/jc-project/pkg/action"
 )
 
 func main() {
 
-	err := stats.AddAction("{}")
+	err := action.AddAction("{}")
 	if err != nil {
 		fmt.Println(fmt.Sprintf("ERROR: %v", err))
 	}
-	stats.AddAction(`{"action": "test", "time": 10}`)
-	stats.AddAction(`{"action": "test", "time": 8}`)
-	fmt.Println(stats.GetStats())
+	action.AddAction(`{"action": "test", "time": 10}`)
+	action.AddAction(`{"action": "test", "time": 8}`)
+	fmt.Println(action.GetStats())
 	fmt.Println("Done.")
 }
