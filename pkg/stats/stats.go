@@ -27,9 +27,7 @@ func AddAction(a string) error {
 	}
 
 	if val, ok := actions[localAction.Action]; ok {
-		fmt.Println("key exists")
-		val = (val + localAction.Time) / 2
-		actions[localAction.Action] = val
+		actions[localAction.Action] = averageOfTwo(val, localAction.Time)
 	} else {
 		actions[localAction.Action] = localAction.Time
 	}
@@ -38,6 +36,11 @@ func AddAction(a string) error {
 }
 
 func GetStats() string {
+	//TODO: needs to return different structure
 	result, _ := json.Marshal(actions)
 	return string(result)
+}
+
+func averageOfTwo(a, b float32) float32 {
+	return (a + b) / 2.0
 }
