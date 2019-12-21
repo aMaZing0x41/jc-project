@@ -14,7 +14,6 @@ func main() {
 	}
 	stats.AddAction(`{"action": "test", "time": 10}`)
 	stats.AddAction(`{"action": "test", "time": 8}`)
-	s := stats.GetStats()
-	fmt.Println(s)
+	fmt.Println(stats.GetStats())
 	fmt.Println("Done.")
 }
