@@ -12,14 +12,21 @@ type actionAvg struct {
 	Avg    float32 `json:"avg,omitempty"`
 }
 
-//TODO: write tests
+// GetStats returns a JSON array of all stats along with the average time for each stat.
+// Concurrent calls are supported. Creates a copy of the underlying data structure to
+// minimize the time that the data structure is locked.
+// Each object in the array looks like {"action": "myaction", "avg": 200}.
+// Returns a string that represents the JSON array.
 func GetStats() string {
 	go getStatsInternal()
 	return <-statsInfoChan
 }
 
+// *** IMPORTANT: calls copyActions which locks the underlying map and copies it.
+// The actions map must always use the common mutex for access.
+// Copy should make the time that the underlying map is locked consistent.
+// Downside is increased memory use. Upside is consistent add performance.
 func getStatsInternal() {
-	//TODO: needs to return different structure
 	actionsCopy := copyActions()
 	stats := []actionAvg{}
 	for k, v := range actionsCopy {
