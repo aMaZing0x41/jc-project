@@ -8,6 +8,8 @@ echo "go vet PASSED"
 echo "running unit tests"
 go test -race ./...
 echo "go test PASSED"
-echo
-echo "INFO: use go run cmd/main.go to run test harness"
-echo "done"
+echo "building..."
+go build -o jc-project cmd/main.go
+echo "build FINISHED"
+echo "./jc-project to run test harness"
+echo "INFO: use go run -race cmd/main.go to run test harness and check for race conditions"
