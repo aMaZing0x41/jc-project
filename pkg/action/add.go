@@ -1,3 +1,7 @@
+// Copyright 2109 Mario Amato. All rights reserved.
+// Use of this source code is governed by a MIT
+// license that can be found in the LICENSE file.
+
 package action
 
 import (
@@ -6,11 +10,17 @@ import (
 	"fmt"
 )
 
+// Internal type that represents an action
 type action struct {
 	Action string  `json:",omitempty"`
 	Time   float32 `json:",omitempty"`
 }
 
+// AddAction takes a json string representing an "action".
+// A valid action looks like {"action": "myaction", "time": 100}
+// If the action is new, it is parsed and tracked.
+// If the action has been added before, the average time for that action is updated.
+// It returns an error if the json is invalid; otherwise nil.
 func AddAction(a string) error {
 	go addActionInternal(a)
 	return <-errChan
