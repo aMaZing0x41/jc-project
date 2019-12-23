@@ -14,9 +14,10 @@ type action struct {
 type empty struct{}
 
 var (
-	actions   = map[string]float32{}
-	addChan   = make(chan string)
-	statsChan = make(chan empty)
+	actions       = map[string]float32{}
+	addChan       = make(chan string)
+	statsChan     = make(chan empty)
+	statsInfoChan = make(chan string)
 )
 
 func init() {
@@ -26,7 +27,7 @@ func init() {
 			case a := <-addChan:
 				addActionInternal(a)
 			case <-statsChan:
-				fmt.Println(getStatsInternal())
+				getStatsInternal()
 			}
 		}
 	}()
@@ -62,14 +63,14 @@ func addActionInternal(a string) error {
 
 func GetStats() string {
 	statsChan <- empty{}
-	return ""
+	return <-statsInfoChan
 }
 
-func getStatsInternal() string {
+func getStatsInternal() {
 	//TODO: needs to return different structure
 
 	result, _ := json.Marshal(actions)
-	return string(result)
+	statsInfoChan <- string(result)
 }
 
 func averageOfTwo(a, b float32) float32 {
