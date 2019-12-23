@@ -10,7 +10,7 @@ import (
 	"fmt"
 )
 
-// Internal type that represents an action
+// Internal type that represents an action to be added
 type action struct {
 	Action string  `json:",omitempty"`
 	Time   float32 `json:",omitempty"`
