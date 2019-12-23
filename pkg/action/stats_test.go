@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+//TODO: tests should start with a clean actions map every time
 func TestAddAction(t *testing.T) {
 	type args struct {
 		action string
@@ -30,12 +31,17 @@ func TestAddAction(t *testing.T) {
 }
 
 func TestAddActionMany(t *testing.T) {
-	AddAction(`{"action":"test", "time": 75}`)
-	err := AddAction(`{"action":"test", "time": 125}`)
+	err := AddAction(`{"action":"test_many", "time": 75}`)
 	if err != nil {
 		t.Errorf("AddAction() returned error: %v", err)
 	}
-	assert.Equal(t, float32(100), actions["test"])
+	err = AddAction(`{"action":"test_many", "time": 125}`)
+	if err != nil {
+		t.Errorf("AddAction() returned error: %v", err)
+	}
+	lock.RLock()
+	defer lock.RUnlock()
+	assert.Equal(t, float32(100), actions["test_many"])
 }
 
 func TestGetStats(t *testing.T) {

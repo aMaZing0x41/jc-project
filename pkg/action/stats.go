@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sync"
 )
 
 type action struct {
@@ -11,65 +12,65 @@ type action struct {
 	Time   float32 `json:",omitempty"`
 }
 
+//TODO: rearrange this. move to common area; split add and get stats
 type empty struct{}
 
 var (
 	actions       = map[string]float32{}
-	addChan       = make(chan string)
-	statsChan     = make(chan empty)
+	lock          = sync.RWMutex{}
+	errChan       = make(chan error)
 	statsInfoChan = make(chan string)
 )
 
-func init() {
-	go func() {
-		for {
-			select {
-			case a := <-addChan:
-				addActionInternal(a)
-			case <-statsChan:
-				getStatsInternal()
-			}
-		}
-	}()
-}
-
 func AddAction(a string) error {
-	addChan <- a
-	//todo: need an error chan
-	return nil
+	go addActionInternal(a)
+	return <-errChan
 }
 
-func addActionInternal(a string) error {
+func addActionInternal(a string) {
 	if a == "" {
-		return errors.New("invalid action: no data")
+		msg := "invalid action: no data"
+		errChan <- errors.New(msg)
+		fmt.Println(msg)
+		return
 	}
 	var localAction action
 	err := json.Unmarshal([]byte(a), &localAction)
 	if err != nil {
-		return fmt.Errorf("invalid action: bad json - %w", err)
+		errChan <- fmt.Errorf("invalid action: bad json - %w", err)
+		fmt.Println(fmt.Sprintf("invalid action: bad json - %v", err))
+		return
 	}
 	if localAction.Action == "" {
-		return errors.New("invalid action: empty action")
+		msg := "invalid action: empty action"
+		errChan <- errors.New(msg)
+		fmt.Println(msg)
+		return
 	}
 
+	//TODO: move this into separate func and defer unlock
+	lock.Lock()
 	if val, ok := actions[localAction.Action]; ok {
 		actions[localAction.Action] = averageOfTwo(val, localAction.Time)
 	} else {
 		actions[localAction.Action] = localAction.Time
 	}
+	lock.Unlock()
 
-	return nil
+	errChan <- nil
 }
 
 func GetStats() string {
-	statsChan <- empty{}
+	go getStatsInternal()
 	return <-statsInfoChan
 }
 
 func getStatsInternal() {
 	//TODO: needs to return different structure
 
+	lock.RLock()
 	result, _ := json.Marshal(actions)
+	lock.RUnlock()
 	statsInfoChan <- string(result)
 }
 
