@@ -51,3 +51,18 @@ func TestAddActionMany(t *testing.T) {
 	defer lock.RUnlock()
 	assert.Equal(t, float32(100), actions["test_many"])
 }
+
+func benchmarkAddAction(i int, b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		for k := 0; k < i; k++ {
+			AddAction(`{"action": "test", "time": 100}`)
+		}
+	}
+}
+
+func BenchmarkAddAction1(b *testing.B)       { benchmarkAddAction(1, b) }
+func BenchmarkAddAction10(b *testing.B)      { benchmarkAddAction(10, b) }
+func BenchmarkAddAction100(b *testing.B)     { benchmarkAddAction(100, b) }
+func BenchmarkAddAction1000(b *testing.B)    { benchmarkAddAction(1000, b) }
+func BenchmarkAddAction100000(b *testing.B)  { benchmarkAddAction(100000, b) }
+func BenchmarkAddAction1000000(b *testing.B) { benchmarkAddAction(1000000, b) }

@@ -6,6 +6,8 @@ package action
 
 import (
 	"encoding/json"
+	"fmt"
+	"math/rand"
 	"reflect"
 	"sort"
 	"strings"
@@ -70,3 +72,27 @@ func TestGetStats(t *testing.T) {
 		})
 	}
 }
+
+// dummy string so that compiler doesn't optimize out the call below
+var dummy string
+
+func benchmarkGetStats(i int, b *testing.B) {
+
+	// Add i entries to the map
+	for k := 0; k < i; k++ {
+		AddAction(fmt.Sprintf(`{"action": "%v", "time": %v}`, fmt.Sprintf("test%v", i), rand.Float32()))
+	}
+
+	var s string
+	for n := 0; n < b.N; n++ {
+		s = GetStats()
+	}
+	dummy = s
+}
+
+func BenchmarkGetStats1(b *testing.B)       { benchmarkGetStats(1, b) }
+func BenchmarkGetStats10(b *testing.B)      { benchmarkGetStats(10, b) }
+func BenchmarkGetStats100(b *testing.B)     { benchmarkGetStats(100, b) }
+func BenchmarkGetStats1000(b *testing.B)    { benchmarkGetStats(1000, b) }
+func BenchmarkGetStats100000(b *testing.B)  { benchmarkGetStats(100000, b) }
+func BenchmarkGetStats1000000(b *testing.B) { benchmarkGetStats(1000000, b) }
