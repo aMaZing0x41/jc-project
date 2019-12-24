@@ -20,7 +20,7 @@ var (
 	oneAction = func() {
 		AddAction(`{"action": "test", "time": 100}`)
 	}
-	fiveActons = func() {
+	fiveActions = func() {
 		AddAction(`{"action": "test1", "time": 1}`)
 		AddAction(`{"action": "test2", "time": 2}`)
 		AddAction(`{"action": "test3", "time": 3}`)
@@ -35,10 +35,11 @@ func TestGetStats(t *testing.T) {
 		populate func()
 		want     []actionAvg
 	}{
+		// Tests can assume that "want" is sorted by the action string
 		{"empty", noActions, []actionAvg{}},
 		{"one", oneAction, []actionAvg{actionAvg{Action: "test", Avg: 100}}},
 		{
-			"five", fiveActons, []actionAvg{
+			"five", fiveActions, []actionAvg{
 				actionAvg{Action: "test1", Avg: 1},
 				actionAvg{Action: "test2", Avg: 2},
 				actionAvg{Action: "test3", Avg: 3},
