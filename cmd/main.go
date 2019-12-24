@@ -14,7 +14,6 @@ import (
 
 var keys = []string{"test1", "test2", "test3", "test4"}
 
-//TODO: doc this
 const NUM_ITERS = 1000000
 
 // This is a simple test harness for the action package NUM_ITERS results in many go routines.
