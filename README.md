@@ -29,9 +29,6 @@ At `cmd/main.go` there is a test harness that imports the action package and cal
 The `NUM_ITERS` const defines how many iterations to run through in the main loop. Currently this needs to be updated and the
 code rebuilt.
 
-### Benchmark Tests
-The 
-
 ## Continuous Integration
 This repo is set up with a github action that runs on every push. The action runs the `build.sh` script. If this fails, merges will not be allowed. 
 
